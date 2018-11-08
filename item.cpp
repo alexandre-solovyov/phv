@@ -3,16 +3,17 @@
 
 const double PI = 3.14159265;
 
-Item::Item(double theSize, const QString& theForm, const QString& theTranslation)
-    : myForm(theForm), myTranslation(theTranslation), myFontSize1(-1), myFontSize2(-1)
+Item::Item(double theSize, double theDelta, const QString& theForm, const QString& theTranslation)
+    : myForm(theForm), myTranslation(theTranslation), myFontSize1(-1), myFontSize2(-1), myDelta(theDelta),
+      myColor(Qt::white)
 {
     myImage.load("d://PhV//ball.png"); //TODO: more universal
     setRect(0, 0, theSize, theSize);
 }
 
-int fitFont(const QString& theText, const QFont& theFont, const QRect& theRect)
+int fitFont(const QString& theText, const QFont& theFont, const QRectF& theRect)
 {
-    const int aMin = 10, aMax = 100;
+    const int aMin = 2, aMax = 100;
     for(int i=aMin; i<=aMax; i++)
     {
         QFont f = theFont;
@@ -46,16 +47,19 @@ void Item::paint(QPainter* thePainter, const QStyleOptionGraphicsItem* theOption
 
     double r = radius();
     double d = r * sqrt(2)/2;
-    QRect aRect(r - d, r - d, 2*d, 2*d);
+    double delta = r * myDelta;
 
-    QFont aFont = thePainter->font();
-    if(myFontSize1 < 0)
-        myFontSize1 = fitFont(myForm, aFont, aRect);
+    //printf("draw %i %i\n", myFontSize1, myFontSize2);
 
-    thePainter->setPen(Qt::white);
-    aFont.setPixelSize(myFontSize1);
-    thePainter->setFont(aFont);
-    thePainter->drawText(aRect, Qt::AlignCenter | Qt::AlignCenter, myForm);
+    bool isDouble = !myTranslation.isEmpty();
+    QRectF aRect1(r - d, r - d - delta, 2*d, isDouble ? d : 2*d);
+    drawText(thePainter, aRect1, myForm, myFontSize1);
+
+    if(isDouble)
+    {
+        QRectF aRect2(r - d, r - delta, 2*d, d);
+        drawText(thePainter, aRect2, myTranslation, myFontSize2);
+    }
 }
 
 void Item::touch(Item* theItem, double theAngleDeg, double theOverlap)
@@ -67,4 +71,46 @@ void Item::touch(Item* theItem, double theAngleDeg, double theOverlap)
     setCenter(c + rot);
 }
 
+void Item::drawText(QPainter* thePainter, const QRectF& theRect, const QString& theText, int& theFontSize)
+{
+    QFont aFont = thePainter->font();
+    if(theFontSize < 0)
+        theFontSize = fitFont(theText, aFont, theRect);
 
+    thePainter->setPen(myColor);
+    aFont.setPixelSize(theFontSize);
+    thePainter->setFont(aFont);
+    thePainter->drawText(theRect, Qt::AlignCenter, theText);
+
+    //thePainter->drawRect(theRect);
+}
+
+QColor Item::color() const
+{
+    return myColor;
+}
+
+void Item::setColor(const QColor& theColor)
+{
+    myColor = theColor;
+}
+
+int Item::fontSize(int theIndex) const
+{
+    switch(theIndex)
+    {
+    case 1: return myFontSize1;
+    case 2: return myFontSize2;
+    default: return -1;
+    }
+}
+
+void Item::setFontSize(int theIndex, int theSize)
+{
+    switch(theIndex)
+    {
+    case 1: myFontSize1 = theSize; break;
+    case 2: myFontSize2 = theSize; break;
+    default: break;
+    }
+}

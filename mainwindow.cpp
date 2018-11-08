@@ -10,6 +10,8 @@ const int SUB_SIZE = MAIN_SIZE/2;
 const int OVERLAP = SUB_SIZE/10;
 const double MAIN_DELTA = 0.2;
 const double SUB_DELTA = -0.1;
+double FULL_CIRCLE = 360.0;
+double START_ANGLE = 90.0;
 
 MainWindow::MainWindow(QWidget* theParent)
     : QMainWindow(theParent)
@@ -37,8 +39,8 @@ void MainWindow::showVerb(const QString& theVerb)
 
     Item* aMainItem = new Item(MAIN_SIZE, MAIN_DELTA, aVerb.Main);
     myScene->addItem(aMainItem);
-    double delta = -360.0 / aVerb.Forms.count();
-    double angle = 90;
+    double delta = -FULL_CIRCLE / aVerb.Forms.count();
+    double angle = START_ANGLE;
     foreach(VerbForm aForm, aVerb.Forms)
     {
         Item* aFormItem = new Item(SUB_SIZE, SUB_DELTA, aForm.Particle, aForm.Translation);

@@ -3,11 +3,39 @@
 
 const double PI = 3.14159265;
 
+void replaceHue(QImage& theImage, const QColor& theColorHue)
+{
+    replaceHue(theImage, theColorHue.hue());
+}
+
+void replaceHue(QImage& theImage, int theColorHue)
+{
+    QImage aNormalized = theImage.convertToFormat(QImage::Format_ARGB32);
+    int n = aNormalized.width() * aNormalized.height();
+    uchar* ptr0 = aNormalized.bits();
+    uchar* ptr = ptr0;
+    for(int i=0; i<n; i++, ptr+=4)
+    {
+        QColor aColor(ptr[2], ptr[1], ptr[0], ptr[3]);
+        aColor = QColor::fromHsl(theColorHue, aColor.saturation(), aColor.lightness(), aColor.alpha());
+        ptr[0] = aColor.blue();
+        ptr[1] = aColor.green();
+        ptr[2] = aColor.red();
+        ptr[3] = aColor.alpha();
+    }
+    theImage = aNormalized;
+}
+
 Item::Item(double theSize, double theDelta, const QString& theForm, const QString& theTranslation)
     : myForm(theForm), myTranslation(theTranslation), myFontSize1(-1), myFontSize2(-1), myDelta(theDelta),
       myColor(Qt::white)
 {
     myImage.load("d://PhV//ball.png"); //TODO: more universal
+    QImage image = myImage.toImage();
+    static int q = 0;
+    q += 50;//TODO: more intellectual
+    replaceHue(image, q);
+    myImage = QPixmap::fromImage(image);
     setRect(0, 0, theSize, theSize);
 }
 

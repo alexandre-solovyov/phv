@@ -23,7 +23,11 @@ class Model
 public:
     Model();
 
+    bool load(const QString&);
     Verb get(const QString&) const;
+
+private:
+    QMap<QString, Verb> myData;
 };
 
 #endif // MODEL_H

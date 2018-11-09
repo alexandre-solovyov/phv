@@ -3,12 +3,7 @@
 
 const double PI = 3.14159265;
 
-void replaceHue(QImage& theImage, const QColor& theColorHue)
-{
-    replaceHue(theImage, theColorHue.hue());
-}
-
-void replaceHue(QImage& theImage, int theColorHue)
+void replaceHueI(QImage& theImage, int theHue, double theSatPart=1.0, double theLightPart=1.0)
 {
     QImage aNormalized = theImage.convertToFormat(QImage::Format_ARGB32);
     int n = aNormalized.width() * aNormalized.height();
@@ -17,24 +12,30 @@ void replaceHue(QImage& theImage, int theColorHue)
     for(int i=0; i<n; i++, ptr+=4)
     {
         QColor aColor(ptr[2], ptr[1], ptr[0], ptr[3]);
-        aColor = QColor::fromHsl(theColorHue, aColor.saturation(), aColor.lightness(), aColor.alpha());
-        ptr[0] = aColor.blue();
-        ptr[1] = aColor.green();
-        ptr[2] = aColor.red();
-        ptr[3] = aColor.alpha();
+        aColor = QColor::fromHsl(theHue, theSatPart*aColor.saturation(), theLightPart*aColor.lightness(), aColor.alpha());
+        ptr[0] = static_cast<uchar>(aColor.blue());
+        ptr[1] = static_cast<uchar>(aColor.green());
+        ptr[2] = static_cast<uchar>(aColor.red());
+        ptr[3] = static_cast<uchar>(aColor.alpha());
     }
     theImage = aNormalized;
 }
 
+void replaceHue(QImage& theImage, const QColor& theColorHue)
+{
+    replaceHueI(theImage, theColorHue.hue());
+}
+
 Item::Item(double theSize, double theDelta, const QString& theForm, const QString& theTranslation)
-    : myForm(theForm), myTranslation(theTranslation), myFontSize1(-1), myFontSize2(-1), myDelta(theDelta),
+    : myForm(theForm), myTranslation(theTranslation), myDelta(theDelta),
+      myFontSize1(-1), myFontSize2(-1),
       myColor(Qt::white)
 {
     myImage.load("d://PhV//ball.png"); //TODO: more universal
     QImage image = myImage.toImage();
     static int q = 0;
     q += 50;//TODO: more intellectual
-    replaceHue(image, q);
+    replaceHueI(image, q, 0.3, 1.0);
     myImage = QPixmap::fromImage(image);
     setRect(0, 0, theSize, theSize);
 }
@@ -69,7 +70,7 @@ void Item::setCenter(const QPointF& thePnt)
     setPos(pos() + thePnt - center());
 }
 
-void Item::paint(QPainter* thePainter, const QStyleOptionGraphicsItem* theOption, QWidget* theWidget)
+void Item::paint(QPainter* thePainter, const QStyleOptionGraphicsItem* /*theOption*/, QWidget* /*theWidget*/)
 {
     thePainter->drawPixmap(rect(), myImage, QRect(0, 0, myImage.width(), myImage.height()));
 

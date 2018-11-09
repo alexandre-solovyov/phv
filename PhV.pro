@@ -38,5 +38,3 @@ HEADERS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
-
-QMAKE_LFLAGS_CONSOLE = -Wl,-subsyetem,console

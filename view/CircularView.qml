@@ -16,28 +16,10 @@ PathView {
     interactive: false
     snapMode: PathView.NoSnap
 
-    model: ListModel {
-        ListElement {
-            title: qsTr("1")
-        }
-        ListElement {
-            title: qsTr("2")
-        }
-        ListElement {
-            title: qsTr("3")
-        }
-        ListElement {
-            title: qsTr("4")
-        }
-        ListElement {
-            title: qsTr("5")
-        }
-    }
-
     delegate: RoundButton {
         width: circularView.itemSize
         height: circularView.itemSize
-        text: model.title
+        text: name
 
         opacity: PathView.itemOpacity
         padding: 12

@@ -11,5 +11,6 @@ ApplicationWindow {
     CircularView {
         id: mainView
         anchors.fill: parent
+        model: guiModel
     }
 }

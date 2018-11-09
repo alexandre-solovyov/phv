@@ -12,5 +12,8 @@ ApplicationWindow {
         id: mainView
         anchors.fill: parent
         model: guiModel
+
+        interactive: true
+        snapMode: PathView.NoSnap
     }
 }

@@ -1,6 +1,7 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
+#include <model.h>
 #include <GuiModel.h>
 
 int main(int argc, char *argv[])
@@ -12,8 +13,10 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
 
     QQmlContext* context = engine.rootContext();
-    GuiModel* aModel = new GuiModel();
-    context->setContextProperty ("guiModel", aModel);
+    Model* aModel = new Model();
+    GuiModel* aGuiModel = new GuiModel(aModel);
+    aGuiModel->setCenterItem("put");
+    context->setContextProperty ("guiModel", aGuiModel);
 
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
     if (engine.rootObjects().isEmpty())

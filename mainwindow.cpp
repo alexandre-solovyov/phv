@@ -1,6 +1,6 @@
-#include "mainwindow.h"
-#include "model.h"
-#include "item.h"
+#include <mainwindow.h>
+#include <model.h>
+#include <item.h>
 #include <QGraphicsView>
 #include <QGraphicsScene>
 #include <QApplication>

@@ -1,8 +1,8 @@
 
 #include <GuiModel.h>
 
-GuiModel::GuiModel(QObject* theParent)
-: QAbstractListModel (theParent)
+GuiModel::GuiModel(Model* theModel, QObject* theParent)
+: QAbstractListModel (theParent), myModel(theModel)
 {
 }
 
@@ -12,7 +12,14 @@ GuiModel::~GuiModel()
 
 QString GuiModel::centerItem() const
 {
-    return "CENTER1";
+    return myCenterItem;
+}
+
+void GuiModel::setCenterItem(const QString& theCenterItem)
+{
+    myCenterItem = theCenterItem;
+    myCurrent = myModel->get(myCenterItem);
+    emit centerItemChanged(myCenterItem);
 }
 
 int GuiModel::rowCount(const QModelIndex& theParent) const
@@ -20,7 +27,7 @@ int GuiModel::rowCount(const QModelIndex& theParent) const
     if(theParent.isValid())
         return 0;
     else
-        return 8; //TODO
+        return myCurrent.Forms.size();
 }
 
 QVariant GuiModel::data(const QModelIndex& theIndex, int theRole) const
@@ -29,7 +36,9 @@ QVariant GuiModel::data(const QModelIndex& theIndex, int theRole) const
     {
     case Qt::DisplayRole:
     case NameRole:
-        return "A" + QString::number(theIndex.row()+1);   //TODO
+        return myCurrent.Forms[theIndex.row()].Particle;
+    case TranslationRole:
+        return myCurrent.Forms[theIndex.row()].Translation;
     default:
         return QVariant();
     }
@@ -39,5 +48,6 @@ QHash<int, QByteArray> GuiModel::roleNames() const
 {
     QHash<int, QByteArray> roles;
     roles[NameRole] = "name";
+    roles[TranslationRole] = "translation";
     return roles;
 }

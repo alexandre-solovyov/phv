@@ -10,6 +10,11 @@ GuiModel::~GuiModel()
 {
 }
 
+QString GuiModel::centerItem() const
+{
+    return "CENTER1";
+}
+
 int GuiModel::rowCount(const QModelIndex& theParent) const
 {
     if(theParent.isValid())

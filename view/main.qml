@@ -4,8 +4,8 @@ import QtQuick.Controls 2.2
 ApplicationWindow {
     id: window
     visible: true
-    width: 640
-    height: 480
+    width: 800
+    height: 600
     title: qsTr("PHV")
 
     CircularView {

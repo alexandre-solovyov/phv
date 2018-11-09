@@ -9,19 +9,36 @@ PathView {
 
     readonly property int cX: width / 2
     readonly property int cY: height / 2
-    readonly property int itemSize: size / 4
-    readonly property int size: Math.min(width - 80, height)
-    readonly property int radius: size / 2 - itemSize / 3
+    readonly property int size: Math.min(width, height)
+
+    readonly property int centerItemSize: size / 2
+    readonly property int subItemSize: size / 4
+    readonly property int radius: centerItemSize/2 + subItemSize/2
 
     interactive: false
     snapMode: PathView.NoSnap
 
+    RoundButton {
+        id: center_btn
+        width: circularView.centerItemSize
+        height: width
+        text: circularView.model.centerItem
+
+        background: Rectangle {
+            radius: width / 2
+            border.width: 3
+            border.color: "blue"
+        }
+
+        anchors.centerIn: parent
+    }
+
     delegate: RoundButton {
-        width: circularView.itemSize
-        height: circularView.itemSize
+        width: circularView.subItemSize
+        height: width
         text: name
 
-        opacity: PathView.itemOpacity
+        opacity: 0.5
         padding: 12
 
         background: Rectangle {
@@ -35,20 +52,8 @@ PathView {
     }
 
     path: Path {
-        startX: circularView.cX
+        startX: circularView.cX + circularView.radius
         startY: circularView.cY
-        PathAttribute {
-            name: "itemOpacity"
-            value: 1.0
-        }
-        PathLine {
-            x: circularView.cX + circularView.radius
-            y: circularView.cY
-        }
-        PathAttribute {
-            name: "itemOpacity"
-            value: 0.7
-        }
         PathArc {
             x: circularView.cX - circularView.radius
             y: circularView.cY
@@ -57,10 +62,6 @@ PathView {
             useLargeArc: true
             direction: PathArc.Clockwise
         }
-        PathAttribute {
-            name: "itemOpacity"
-            value: 0.5
-        }
         PathArc {
             x: circularView.cX + circularView.radius
             y: circularView.cY
@@ -68,10 +69,6 @@ PathView {
             radiusY: circularView.radius
             useLargeArc: true
             direction: PathArc.Clockwise
-        }
-        PathAttribute {
-            name: "itemOpacity"
-            value: 0.3
         }
     }
 }
